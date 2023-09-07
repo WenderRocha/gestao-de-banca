@@ -15,15 +15,10 @@ import Wallet from "../Pages/Components/Wallet/Wallet.vue";
 
                 <Button
                     external
-                    variant="black"
-                    target="_blank"
-                    class="items-center gap-2 max-w-xs"
-                    v-slot="{ iconSizeClasses }"
-                    href="https://github.com/kamona-wd/kui-laravel-breeze"
+                    variant="success"
+                    class="items-center gap-2 max-w-xs flex justify-center"
                 >
-                    <GithubIcon aria-hidden="true" :class="iconSizeClasses" />
-
-                    <span>Star on Github</span>
+                    <span>Nova carteira</span>
                 </Button>
             </div>
         </template>
