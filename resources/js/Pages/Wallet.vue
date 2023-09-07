@@ -3,6 +3,7 @@ import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Button from "@/Components/Button.vue";
 import { GithubIcon } from "@/Components/Icons/brands";
 import Wallet from "../Pages/Components/Wallet/Wallet.vue";
+import CreateWallet from "../Pages/Components/Wallet/CreateWallet.vue";
 </script>
 
 <template>
@@ -13,13 +14,7 @@ import Wallet from "../Pages/Components/Wallet/Wallet.vue";
             >
                 <h2 class="text-xl font-semibold leading-tight">Carteiras</h2>
 
-                <Button
-                    external
-                    variant="success"
-                    class="items-center gap-2 max-w-xs flex justify-center"
-                >
-                    <span>Nova carteira</span>
-                </Button>
+                <CreateWallet/>
             </div>
         </template>
 

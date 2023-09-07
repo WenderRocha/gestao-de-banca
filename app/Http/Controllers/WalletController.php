@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\{StoreWalletRequest, UpdateWalletRequest};
 use App\Models\Wallet;
-use App\Http\Requests\StoreWalletRequest;
-use App\Http\Requests\UpdateWalletRequest;
 use Inertia\Inertia;
 
 class WalletController extends Controller
@@ -30,7 +29,7 @@ class WalletController extends Controller
      */
     public function store(StoreWalletRequest $request)
     {
-        //
+        //return back()->withErrors('Erro ao cadastrar carteira', 'error');
     }
 
     /**
