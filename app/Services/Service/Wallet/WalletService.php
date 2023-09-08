@@ -34,12 +34,11 @@ class WalletService implements WalletServiceInterface
                 'show_checklist'  => $data['checklist'],
             ]);
 
-            // A carteira foi criada com sucesso
             return true;
 
         } catch (\Exception $e) {
 
-            // Houve um erro ao criar a carteira, você pode acessar informações de erro em $e
+            // Houve um erro ao criar a carteira, verifique o log
             Log::error('Erro ao criar carteira: ' . $e->getMessage());
 
             return false;

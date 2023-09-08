@@ -24,6 +24,7 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
-        "flowbite-vue": "^0.0.17-next.2"
+        "flowbite-vue": "^0.0.17-next.2",
+        "vue-toastification": "^2.0.0-rc.5"
     }
 }

@@ -6,6 +6,9 @@ import ErrorValidation from "@/Components/ErrorValidation.vue";
 import { useForm } from "@inertiajs/vue3";
 import { Select, Toggle } from "flowbite-vue";
 import { usePage } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const page = usePage();
 
@@ -34,10 +37,10 @@ const stopTypes = [
 const form = useForm({
     name: "Minha carteira",
     currency: "BRL",
-    balance: 0,
+    balance: null,
     stopType: "",
-    stop: 0,
-    take: 0,
+    stop: null,
+    take: null,
     main: true,
     status: true,
     checklist: true,
@@ -46,12 +49,12 @@ const form = useForm({
 const submit = () => {
     form.post(route("wallet.store"), {
         onSuccess: () => {
-            alert("Cadastrado com sucesso!");
+            toast.success("Carteira criada com sucesso!");
             form.reset();
             closeModal();
         },
         onError: () => {
-            alert((page.props.errors.error[0]) ? page.props.errors.error[0] : '');
+            toast.error(page.props.errors.error[0]);
         },
     });
 };
