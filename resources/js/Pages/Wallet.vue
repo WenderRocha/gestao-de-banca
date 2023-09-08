@@ -4,6 +4,12 @@ import Button from "@/Components/Button.vue";
 import { GithubIcon } from "@/Components/Icons/brands";
 import Wallet from "../Pages/Components/Wallet/Wallet.vue";
 import CreateWallet from "../Pages/Components/Wallet/CreateWallet.vue";
+import { defineProps } from "vue"
+import { Alert } from 'flowbite-vue'
+
+const props = defineProps({
+    wallets: Array
+})
 </script>
 
 <template>
@@ -21,10 +27,10 @@ import CreateWallet from "../Pages/Components/Wallet/CreateWallet.vue";
         <div
             class="p-6 overflow-hidden bg-white rounded-md shadow-md dark:bg-dark-eval-1"
         >
+            <Alert v-show="!props.wallets.length > 0" type="info" class="mb-2 w-full">Nenhuma carteira encontrada, crie sua carteira para iniciar o gerênciamento!</Alert>
+
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <Wallet />
-                <Wallet />
-                <Wallet />
+                <Wallet v-for="wallet in wallets" :key="wallet.id" :name="wallet.name" :balance="wallet.balance" :currency="wallet.currency"/>
             </div>
         </div>
     </AuthenticatedLayout>

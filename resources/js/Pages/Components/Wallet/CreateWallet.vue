@@ -27,8 +27,8 @@ const currencys = [
 ];
 
 const stopTypes = [
-    { value: "proportional", name: "Proporcional %" },
-    { value: "value", name: "Valor R$" },
+    { value: 1, name: "Valor R$" },
+    { value: 2, name: "Proporcional %" },
 ];
 
 const form = useForm({

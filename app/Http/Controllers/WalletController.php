@@ -4,16 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\{StoreWalletRequest, UpdateWalletRequest};
 use App\Models\Wallet;
+use App\Services\ServiceInterface\Wallet\WalletServiceInterface;
 use Inertia\Inertia;
 
 class WalletController extends Controller
 {
+    public function __construct(
+        public WalletServiceInterface $walletService
+    ) {
+
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('Wallet');
+        $wallets = $this->walletService->findAll();
+
+        return Inertia::render('Wallet', [
+            'wallets' => $wallets,
+        ]);
     }
 
     /**
@@ -29,7 +39,14 @@ class WalletController extends Controller
      */
     public function store(StoreWalletRequest $request)
     {
-        //return back()->withErrors('Erro ao cadastrar carteira', 'error');
+
+        $create = $this->walletService->create($request->all());
+
+        if($create) {
+            return redirect()->route('wallet.index');
+        }
+
+        return back()->withErrors('Erro ao cadastrar carteira', 'error');
     }
 
     /**

@@ -8,7 +8,7 @@ const props = defineProps({
         default: 'Minha carteira'
     },
     balance: {
-        type: Number,
+        type: String,
         default: 0
     },
     currency: {
