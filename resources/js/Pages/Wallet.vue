@@ -30,7 +30,7 @@ const props = defineProps({
             <Alert v-show="!props.wallets.length > 0" type="info" class="mb-2 w-full">Nenhuma carteira encontrada, crie sua carteira para iniciar o gerênciamento!</Alert>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <Wallet v-for="wallet in wallets" :key="wallet.id" :name="wallet.name" :balance="wallet.balance" :currency="wallet.currency"/>
+                <Wallet v-for="wallet in wallets" :key="wallet.id" :id="wallet.id" :name="wallet.name" :balance="wallet.balance" :currency="wallet.currency"/>
             </div>
         </div>
     </AuthenticatedLayout>

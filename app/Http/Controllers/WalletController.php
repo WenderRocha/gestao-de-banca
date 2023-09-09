@@ -76,8 +76,14 @@ class WalletController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Wallet $wallet)
+    public function destroy(string|int $id)
     {
-        //
+        $delete = $this->walletService->delete($id);
+
+        if($delete) {
+            return redirect()->route('wallet.index');
+        }
+
+        return back()->withErrors('Não foi possivel deletar a carteira.');
     }
 }
