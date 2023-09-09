@@ -1,10 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
-import Button from "@/Components/Button.vue";
-import { GithubIcon } from "@/Components/Icons/brands";
 import Wallet from "../Pages/Components/Wallet/Wallet.vue";
 import CreateWallet from "../Pages/Components/Wallet/CreateWallet.vue";
-import { defineProps } from "vue"
 import { Alert } from 'flowbite-vue'
 
 const props = defineProps({

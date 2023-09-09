@@ -1,6 +1,5 @@
 <script setup>
 import Button from "@/Components/Button.vue";
-import { defineProps } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { Link } from "@inertiajs/vue3";
