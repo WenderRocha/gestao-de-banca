@@ -1,12 +1,13 @@
 <script setup>
 import { Modal, Input } from "flowbite-vue";
-import { ref } from "vue";
+import { ref, watch, reactive } from "vue";
 import Button from "@/Components/Button.vue";
 import ErrorValidation from "@/Components/ErrorValidation.vue";
 import { useForm } from "@inertiajs/vue3";
 import { Select, Toggle } from "flowbite-vue";
 import { usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
+import CurrencyInput from "../Shared/CurrencyInput.vue";
 
 const toast = useToast();
 
@@ -24,18 +25,12 @@ function showModal() {
 
 const currencys = [
     { value: "BRL", name: "Real" },
-    { value: "USD", name: "Dólar" },
+    { value: "USD", name: "Dolar" },
     { value: "EUR", name: "Euro" },
-    { value: "LIB", name: "Libra" },
-];
-
-const stopTypes = [
-    { value: 1, name: "Valor R$" },
-    { value: 2, name: "Proporcional %" },
 ];
 
 const form = useForm({
-    name: "Minha carteira",
+    name: "",
     currency: "BRL",
     balance: null,
     stopType: "",
@@ -46,6 +41,11 @@ const form = useForm({
     checklist: true,
 });
 
+const stopTypes = [
+    { value: 1, name: "Valor $" },
+    { value: 2, name: "Proporcional %" },
+];
+
 const submit = () => {
     form.post(route("wallet.store"), {
         onSuccess: () => {
@@ -54,9 +54,22 @@ const submit = () => {
             closeModal();
         },
         onError: () => {
-            toast.error(page.props.errors.error[0]);
+            if (page.props.errors.error) {
+                toast.error(page.props.errors.error[0]);
+            }
         },
     });
+};
+
+const currency_input_reload = ref(0);
+
+//recebe o evento do componente filho (CurrencyInput) com o novo simbolo de moeda
+const updateCurrencySymbol = (newSymbol) => {
+    //incrementa a variavel para recarregar o componente CurrencyInput
+    currency_input_reload.value++;
+
+    //atribui o novo simbolo
+    form.currency = newSymbol;
 };
 </script>
 
@@ -80,7 +93,7 @@ const submit = () => {
                     <div>
                         <Input
                             v-model="form.name"
-                            placeholder="Minha carteira, Quotex, IQ Option"
+                            placeholder="Carteira, Quotex, IQ Option"
                             label="Nome"
                         />
                         <ErrorValidation :error="form.errors.name" />
@@ -96,7 +109,15 @@ const submit = () => {
                         <ErrorValidation :error="form.errors.currency" />
                     </div>
                     <div>
-                        <Input v-model="form.balance" label="Saldo inicial" />
+                        <CurrencyInput
+                            v-model="form.balance"
+                            label="Saldo inicial"
+                            :currency="form.currency"
+                            :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol"
+                        />
+
+                        <!-- <Input v-model="form.balance" label="Saldo inicial" /> -->
                         <ErrorValidation :error="form.errors.balance" />
                     </div>
                 </div>
@@ -111,16 +132,44 @@ const submit = () => {
                         <ErrorValidation :error="form.errors.stopType" />
                     </div>
                     <div>
-                        <Input v-model="form.stop" label="Stop" />
+                        <CurrencyInput
+                            v-if="form.stopType === 1"
+                            :disabled="form.stopType === ''"
+                            v-model="form.stop"
+                            label="Stop loss"
+                            :currency="form.currency"
+                            :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol"
+                        />
+                        <Input
+                            v-else
+                            :disabled="form.stopType === ''"
+                            v-model="form.stop"
+                            label="Stop loss"
+                        />
                         <ErrorValidation :error="form.errors.stop" />
                     </div>
                     <div>
-                        <Input v-model="form.take" label="Take" />
+                        <CurrencyInput
+                            v-if="form.stopType === 1"
+                            :disabled="form.stopType === ''"
+                            v-model="form.take"
+                            label="Take profit"
+                            :currency="form.currency"
+                            :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol"
+                        />
+                        <Input
+                            v-else
+                            :disabled="form.stopType === ''"
+                            v-model="form.take"
+                            label="Take profit"
+                        />
                         <ErrorValidation :error="form.errors.take" />
                     </div>
                 </div>
                 <div class="mt-10 flex justify-between">
-                    <div>
+                    <div class="flex flex-col">
                         <Toggle v-model="form.main" label="Principal" />
                         <ErrorValidation :error="form.errors.main" />
                     </div>
@@ -129,7 +178,10 @@ const submit = () => {
                         <ErrorValidation :error="form.errors.status" />
                     </div>
                     <div>
-                        <Toggle v-model="form.checklist" label="Exibir checklist"/>
+                        <Toggle
+                            v-model="form.checklist"
+                            label="Exibir checklist"
+                        />
                         <ErrorValidation :error="form.errors.checklist" />
                     </div>
                 </div>

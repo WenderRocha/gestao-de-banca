@@ -7,21 +7,15 @@ import { Link } from "@inertiajs/vue3";
 const toast = useToast();
 
 const props = defineProps({
-    id: {
-        type: String,
-        default: null,
-    },
-    name: {
-        type: String,
-        default: "Minha carteira",
-    },
-    balance: {
-        type: String,
-        default: 0,
-    },
-    currency: {
-        type: String,
-        default: "R$",
+    wallet: {
+        type: Object,
+        default: {
+            id: null,
+            name: "",
+            balance: null,
+            currency: null,
+            main: null,
+        },
     },
 });
 
@@ -46,7 +40,7 @@ const deleteWallet = (id) => {
         <div class="flex justify-end px-4 pt-4">
             <Link
                 href=""
-                @click="deleteWallet(props.id)"
+                @click="deleteWallet(props.wallet.id)"
                 class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 >Deletar</Link
             >
@@ -55,11 +49,29 @@ const deleteWallet = (id) => {
             <div class="w-30 h-30 mb-3 rounded-full shadow-lg">
                 <img src="/img/app-wallet-passes.png" alt="Bonnie image" />
             </div>
-            <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-                {{ props.name }}
+            <h5
+                class="mb-1 flex gap-2 text-xl font-medium text-gray-900 dark:text-white"
+            >
+                {{ props.wallet.name }}
+
+                <svg
+                    v-show="props.wallet.main"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6 text-blue-500"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
+                    />
+                </svg>
             </h5>
             <span class="text-sm text-green-500 font-bold dark:text-gray-400"
-                >{{ props.currency }} {{ props.balance }}</span
+                >{{ props.wallet.currency }} {{ props.wallet.balance }}</span
             >
             <div class="flex mt-4 space-x-3 md:mt-6">
                 <Button variant="primary" class="items-center gap-2 max-w-xs">

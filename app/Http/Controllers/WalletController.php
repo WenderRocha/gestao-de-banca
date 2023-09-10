@@ -40,7 +40,7 @@ class WalletController extends Controller
     public function store(StoreWalletRequest $request)
     {
 
-        $create = $this->walletService->create($request->all());
+        $create = $this->walletService->create($request->validated());
 
         if($create) {
             return redirect()->route('wallet.index');

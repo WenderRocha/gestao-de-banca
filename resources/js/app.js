@@ -13,7 +13,7 @@ import "flowbite";
 const options = {
     // You can set your default notification options here
     position: "top-right",
-    timeout: 5000,
+    timeout: 2000,
     closeOnClick: true,
     pauseOnFocusLoss: true,
     pauseOnHover: true,
