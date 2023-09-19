@@ -3,6 +3,7 @@ import Button from "@/Components/Button.vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { Link } from "@inertiajs/vue3";
+import CurrencyFormat from "../Shared/CurrencyFormat.vue";
 
 const toast = useToast();
 
@@ -22,15 +23,16 @@ const props = defineProps({
 const deleteWallet = (id) => {
     if (confirm("Deseja realmente deletar a carteira ?")) {
         router.delete(route("wallet.destroy", id), {
-            onSuccess: (page) => {
+            onSuccess: () => {
                 toast.success("Carteira deletada com sucesso!");
             },
-            onError: (errors) => {
+            onError: () => {
                 toast.error("Oops! Não foi possivel deletar a carteira.");
             },
         });
     }
 };
+
 </script>
 
 <template>
@@ -70,9 +72,11 @@ const deleteWallet = (id) => {
                     />
                 </svg>
             </h5>
-            <span class="text-sm text-green-500 font-bold dark:text-gray-400"
-                >{{ props.wallet.currency }} {{ props.wallet.balance }}</span
-            >
+            <span class="text-sm text-green-500 font-bold dark:text-gray-400">
+                <span>
+                    <CurrencyFormat :currency="props.wallet.currency" :balance="props.wallet.balance"/>
+                </span>
+            </span>
             <div class="flex mt-4 space-x-3 md:mt-6">
                 <Button variant="primary" class="items-center gap-2 max-w-xs">
                     <span>Gerênciar</span>

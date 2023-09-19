@@ -4,7 +4,7 @@ import { ref, watch, reactive } from "vue";
 import Button from "@/Components/Button.vue";
 import ErrorValidation from "@/Components/ErrorValidation.vue";
 import { useForm } from "@inertiajs/vue3";
-import { Select, Toggle } from "flowbite-vue";
+import { Select, Toggle, Range } from "flowbite-vue";
 import { usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import CurrencyInput from "../Shared/CurrencyInput.vue";
@@ -33,7 +33,7 @@ const form = useForm({
     name: "",
     currency: "BRL",
     balance: null,
-    stopType: "",
+    stopType: 1,
     stop: null,
     take: null,
     main: true,
@@ -42,8 +42,8 @@ const form = useForm({
 });
 
 const stopTypes = [
-    { value: 1, name: "Valor $" },
-    { value: 2, name: "Proporcional %" },
+    { value: 1, name: "Valor" },
+    { value: 2, name: "Proporcional" },
 ];
 
 const submit = () => {
@@ -71,6 +71,47 @@ const updateCurrencySymbol = (newSymbol) => {
     //atribui o novo simbolo
     form.currency = newSymbol;
 };
+
+const rangeValueStop = ref(0);
+const stopTypeValue = ref(0);
+
+const rangeValueTake = ref(0);
+const takeTypeValue = ref(0);
+
+const calValueStop = () => {
+    let percetage = (rangeValueStop.value / 100) * form.balance;
+    form.stop = rangeValueStop.value;
+    stopTypeValue.value = percetage;
+    currency_input_reload.value++;
+};
+
+const calValueTake = () => {
+    let percetage = (rangeValueTake.value / 100) * form.balance;
+    form.take = rangeValueTake.value;
+    takeTypeValue.value = percetage;
+    currency_input_reload.value++;
+};
+
+const cleanStopType = () => {
+    form.stop = null;
+    form.take = null;
+
+    rangeValueTake.value = 0;
+    takeTypeValue.value = 0;
+
+    rangeValueStop.value = 0;
+    stopTypeValue.value = 0;
+
+    currency_input_reload.value++;
+};
+
+function updateBalance() {
+    rangeValueTake.value = 0;
+    takeTypeValue.value = 0;
+
+    rangeValueStop.value = 0;
+    stopTypeValue.value = 0;
+}
 </script>
 
 <template>
@@ -110,6 +151,7 @@ const updateCurrencySymbol = (newSymbol) => {
                     </div>
                     <div>
                         <CurrencyInput
+                            @keyup="updateBalance()"
                             v-model="form.balance"
                             label="Saldo inicial"
                             :currency="form.currency"
@@ -121,14 +163,16 @@ const updateCurrencySymbol = (newSymbol) => {
                         <ErrorValidation :error="form.errors.balance" />
                     </div>
                 </div>
-                <div class="mb-6 grid grid-cols-3 gap-3">
+                <div v-show="form.balance !== null" class="mb-6 grid grid-cols-3 gap-3">
                     <div>
                         <Select
+                            @change="cleanStopType()"
                             v-model="form.stopType"
                             :options="stopTypes"
                             label="Tipo de stop"
                             placeholder="Escolha o tipo de stop"
                         />
+
                         <ErrorValidation :error="form.errors.stopType" />
                     </div>
                     <div>
@@ -136,16 +180,27 @@ const updateCurrencySymbol = (newSymbol) => {
                             v-if="form.stopType === 1"
                             :disabled="form.stopType === ''"
                             v-model="form.stop"
-                            label="Stop loss"
+                            label="Stop Loss"
                             :currency="form.currency"
                             :key="currency_input_reload"
                             @updateCurrencySymbol="updateCurrencySymbol"
                         />
-                        <Input
-                            v-else
-                            :disabled="form.stopType === ''"
-                            v-model="form.stop"
-                            label="Stop loss"
+
+                        <CurrencyInput
+                            v-if="form.stopType === 2"
+                            :disabled="true"
+                            v-model="stopTypeValue"
+                            :label="`Stop Loss ${rangeValueStop}%`"
+                            :currency="form.currency"
+                            :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol"
+                        />
+
+                        <Range
+                            v-if="form.stopType === 2"
+                            @change="calValueStop()"
+                            v-model="rangeValueStop"
+                            label=""
                         />
                         <ErrorValidation :error="form.errors.stop" />
                     </div>
@@ -159,11 +214,22 @@ const updateCurrencySymbol = (newSymbol) => {
                             :key="currency_input_reload"
                             @updateCurrencySymbol="updateCurrencySymbol"
                         />
-                        <Input
-                            v-else
-                            :disabled="form.stopType === ''"
-                            v-model="form.take"
-                            label="Take profit"
+
+                        <CurrencyInput
+                            v-if="form.stopType === 2"
+                            :disabled="true"
+                            v-model="takeTypeValue"
+                            :label="`Take profit ${rangeValueTake}%`"
+                            :currency="form.currency"
+                            :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol"
+                        />
+
+                        <Range
+                            v-if="form.stopType === 2"
+                            @change="calValueTake()"
+                            v-model="rangeValueTake"
+                            label=""
                         />
                         <ErrorValidation :error="form.errors.take" />
                     </div>
@@ -174,7 +240,7 @@ const updateCurrencySymbol = (newSymbol) => {
                         <ErrorValidation :error="form.errors.main" />
                     </div>
                     <div>
-                        <Toggle v-model="form.status" label="Status" />
+                        <Toggle v-model="form.status" label="Ativo" />
                         <ErrorValidation :error="form.errors.status" />
                     </div>
                     <div>
@@ -198,6 +264,7 @@ const updateCurrencySymbol = (newSymbol) => {
                 </Button>
                 <Button
                     @click="submit"
+                    :disabled="form.processing"
                     variant="primary"
                     class="items-center gap-2 max-w-xs flex justify-center"
                 >
