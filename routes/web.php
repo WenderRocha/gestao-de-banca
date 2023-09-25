@@ -42,6 +42,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/carteiras', [WalletController::class, 'store'])->name('wallet.store');
     Route::delete('/carteiras/{id}', [WalletController::class, 'destroy'])->name('wallet.destroy');
     Route::put('/wallet', [WalletController::class, 'update'])->name('wallet.update');
+
+    Route::get('/transacoes', function (){
+      return Inertia::render('Transection');
+    })->name('transacoes.index');
+
+
 });
 
 Route::get('/components/buttons', function () {
