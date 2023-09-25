@@ -199,11 +199,12 @@ function updateBalance() {
                             @updateCurrencySymbol="updateCurrencySymbol"
                         />
 
-                        <Range
+                        <input
                             v-if="form.stop_type === 2"
-                            @change="calValueStop()"
+                            type="range"
                             v-model="rangeValueStop"
-                            label=""
+                            @change="calValueStop()"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500"
                         />
                         <ErrorValidation :error="form.errors.stop" />
                     </div>
@@ -228,12 +229,14 @@ function updateBalance() {
                             @updateCurrencySymbol="updateCurrencySymbol"
                         />
 
-                        <Range
+                        <input
                             v-if="form.stop_type === 2"
-                            @change="calValueTake()"
+                            type="range"
                             v-model="rangeValueTake"
-                            label=""
+                            @change="calValueTake()"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500"
                         />
+
                         <ErrorValidation :error="form.errors.take" />
                     </div>
                 </div>
