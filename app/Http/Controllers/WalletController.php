@@ -68,9 +68,17 @@ class WalletController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateWalletRequest $request, Wallet $wallet)
+    public function update(UpdateWalletRequest $request)
     {
-        //
+        //dd($request->validated());
+
+        $update = $this->walletService->update($request->id, $request->validated());
+
+        if(!$update) {
+            return redirect()
+            ->route('wallet.index')
+            ->withErrors('Não foi possivel atualizar a carteira!', 'error');
+        }
     }
 
     /**

@@ -1,12 +1,13 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
-import Wallet from "../Pages/Components/Wallet/Wallet.vue";
+import ListWallet from "../Pages/Components/Wallet/ListWallet.vue";
 import CreateWallet from "../Pages/Components/Wallet/CreateWallet.vue";
 import { Alert } from "flowbite-vue";
 
 const props = defineProps({
     wallets: Array,
 });
+
 </script>
 
 <template>
@@ -33,7 +34,7 @@ const props = defineProps({
             >
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <Wallet
+                <ListWallet
                     v-for="wallet in wallets"
                     :key="wallet.id"
                     :wallet="wallet"

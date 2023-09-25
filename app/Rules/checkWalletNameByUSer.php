@@ -16,6 +16,7 @@ class checkWalletNameByUSer implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+
         // Obtem o nome da carteira
         $name = request()->input('name');
 
@@ -27,8 +28,11 @@ class checkWalletNameByUSer implements ValidationRule
             ->where('name', $name)
             ->exists();
 
-        if ($exists) {
-            $fail('Você já tem uma carteira com esse nome.');
+        if(request()->method() != 'PUT') {
+            if ($exists) {
+                $fail('Já existe uma carteira com esse nome.');
+            }
         }
+
     }
 }

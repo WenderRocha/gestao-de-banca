@@ -1,7 +1,3 @@
-<template>
-    <Input ref="inputRef" :label="label" />
-</template>
-
 <script>
 import { useCurrencyInput } from "vue-currency-input";
 import { Input } from "flowbite-vue";
@@ -45,3 +41,7 @@ export default {
     },
 };
 </script>
+
+<template>
+    <Input ref="inputRef" :label="label" />
+</template>

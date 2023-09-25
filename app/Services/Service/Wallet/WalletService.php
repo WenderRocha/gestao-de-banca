@@ -27,12 +27,12 @@ class WalletService implements WalletServiceInterface
                 'currency'        => $data['currency'],
                 'initial_balance' => $data['balance'],
                 'balance'         => $data['balance'],
-                'stop_type'       => $data['stopType'],
+                'stop_type'       => $data['stop_type'],
                 'stop'            => $data['stop'],
                 'take'            => $data['take'],
                 'status'          => $data['status'],
                 'main'            => $data['main'],
-                'show_checklist'  => $data['checklist'],
+                'show_checklist'  => $data['show_checklist'],
             ]);
 
             return true;
@@ -94,6 +94,24 @@ class WalletService implements WalletServiceInterface
                 return false;
             }
 
+        }
+
+        return false;
+    }
+
+    /**
+     * Atualiza uma carteira
+     *
+     * @param integer $id
+     * @param array $data
+     * @return bool
+     */
+    public function update(int|string $id, array $data): bool
+    {
+        $wallet = Wallet::query()->where('id', '=', $id)->first();
+
+        if ($wallet) {
+            return $wallet->update($data);
         }
 
         return false;

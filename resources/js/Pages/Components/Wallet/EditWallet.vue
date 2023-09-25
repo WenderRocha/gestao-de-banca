@@ -1,27 +1,29 @@
 <script setup>
-import { Modal, Input } from "flowbite-vue";
-import { ref, watch, reactive, defineProps } from "vue";
 import Button from "@/Components/Button.vue";
-import ErrorValidation from "@/Components/ErrorValidation.vue";
+import { ref, defineProps, defineEmits } from "vue";
 import { useForm } from "@inertiajs/vue3";
-import { Select, Toggle, Range } from "flowbite-vue";
-import { usePage } from "@inertiajs/vue3";
-import { useToast } from "vue-toastification";
 import CurrencyInput from "../Shared/CurrencyInput.vue";
+import ErrorValidation from "@/Components/ErrorValidation.vue";
+import { Select, Toggle, Range, Modal, Input } from "flowbite-vue";
+import { useToast } from "vue-toastification";
 
 const toast = useToast();
 
-const page = usePage();
+const props = defineProps({
+    wallet: Object,
+});
 
-const isShowModal = ref(false);
+const emits = defineEmits(["currencyFormatUpdate"]); // Define the custom event
 
 function closeModal() {
-    isShowModal.value = false;
+    form.reset();
+    editMode.value = false;
 }
 
-function showModal() {
-    isShowModal.value = true;
-}
+const stopTypes = [
+    { value: 1, name: "Valor" },
+    { value: 2, name: "Proporcional" },
+];
 
 const currencys = [
     { value: "BRL", name: "Real" },
@@ -30,36 +32,17 @@ const currencys = [
 ];
 
 const form = useForm({
-    name: "",
-    currency: "BRL",
-    balance: null,
-    stop_type: 1,
-    stop: null,
-    take: null,
-    main: true,
-    status: true,
-    show_checklist: true,
+    id: props.wallet.id,
+    name: props.wallet.name,
+    currency: props.wallet.currency,
+    balance: props.wallet.balance,
+    stop_type: props.wallet.stop_type,
+    stop: props.wallet.stop,
+    take: props.wallet.take,
+    main: props.wallet.main ? true : false,
+    status: props.wallet.status ? true : false,
+    show_checklist: props.wallet.checklist ? true : false,
 });
-
-const stopTypes = [
-    { value: 1, name: "Valor" },
-    { value: 2, name: "Proporcional" },
-];
-
-const submit = () => {
-    form.post(route("wallet.store"), {
-        onSuccess: () => {
-            toast.success("Carteira criada com sucesso!");
-            form.reset();
-            closeModal();
-        },
-        onError: () => {
-            if (page.props.errors.error) {
-                toast.error(page.props.errors.error[0]);
-            }
-        },
-    });
-};
 
 const currency_input_reload = ref(0);
 
@@ -72,11 +55,15 @@ const updateCurrencySymbol = (newSymbol) => {
     form.currency = newSymbol;
 };
 
-const rangeValueStop = ref(0);
-const stopTypeValue = ref(0);
+const rangeValueStop = ref(form.stop_type === 2 ? form.stop : 0);
+const stopTypeValue = ref(
+    form.stop_type === 2 ? (form.stop / 100) * form.balance : 0
+);
 
-const rangeValueTake = ref(0);
-const takeTypeValue = ref(0);
+const rangeValueTake = ref(form.stop_type === 2 ? form.take : 0);
+const takeTypeValue = ref(
+    form.stop_type === 2 ? (form.take / 100) * form.balance : 0
+);
 
 const calValueStop = () => {
     let percetage = (rangeValueStop.value / 100) * form.balance;
@@ -112,21 +99,40 @@ function updateBalance() {
     rangeValueStop.value = 0;
     stopTypeValue.value = 0;
 }
+
+const editMode = ref(false);
+
+const edit = () => {
+    editMode.value = true;
+};
+
+const submit = () => {
+    form.put(route("wallet.update"), {
+        onSuccess: () => {
+            toast.info("Carteira atualizada com sucesso!");
+            emits("currencyFormatUpdate", true); // Use emits to emit the event
+        },
+        onError: (errors) => {
+            toast.error(errors.error[0]);
+        },
+    });
+};
 </script>
 
 <template>
     <Button
-        @click="showModal"
-        external
-        variant="success"
+        @click="edit"
+        variant="secondary"
         class="items-center gap-2 max-w-xs flex justify-center"
     >
-        <span>Nova carteira</span>
+        <span>Editar</span>
     </Button>
 
-    <Modal persistent v-if="isShowModal" @close="closeModal">
+    <Modal persistent v-if="editMode" @close="closeModal">
         <template #header>
-            <div class="flex items-center text-lg">Nova carteira</div>
+            <div class="flex items-center text-lg font-bold">
+                {{ form.name }}
+            </div>
         </template>
         <template #body>
             <div>
@@ -176,7 +182,7 @@ function updateBalance() {
                             placeholder="Escolha o tipo de stop"
                         />
 
-                        <ErrorValidation :error="form.errors.stopType" />
+                        <ErrorValidation :error="form.errors.stop_type" />
                     </div>
                     <div>
                         <CurrencyInput
@@ -193,18 +199,22 @@ function updateBalance() {
                             v-if="form.stop_type === 2"
                             :disabled="true"
                             v-model="stopTypeValue"
-                            :label="`Stop Loss ${rangeValueStop}%`"
+                            :label="`Stop Loss: ${rangeValueStop}%`"
                             :currency="form.currency"
                             :key="currency_input_reload"
                             @updateCurrencySymbol="updateCurrencySymbol"
                         />
 
-                        <Range
+ 
+                        <input
                             v-if="form.stop_type === 2"
-                            @change="calValueStop()"
+                            type="range"
                             v-model="rangeValueStop"
-                            label=""
+                            @change="calValueStop()"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500"
                         />
+
+                     
                         <ErrorValidation :error="form.errors.stop" />
                     </div>
                     <div>
@@ -222,18 +232,21 @@ function updateBalance() {
                             v-if="form.stop_type === 2"
                             :disabled="true"
                             v-model="takeTypeValue"
-                            :label="`Take profit ${rangeValueTake}%`"
+                            :label="`Take profit: ${rangeValueTake}%`"
                             :currency="form.currency"
                             :key="currency_input_reload"
                             @updateCurrencySymbol="updateCurrencySymbol"
                         />
 
-                        <Range
+                        <input
                             v-if="form.stop_type === 2"
-                            @change="calValueTake()"
+                            type="range"
                             v-model="rangeValueTake"
-                            label=""
+                            @change="calValueTake()"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500"
                         />
+
+           
                         <ErrorValidation :error="form.errors.take" />
                     </div>
                 </div>
@@ -268,10 +281,10 @@ function updateBalance() {
                 <Button
                     @click="submit"
                     :disabled="form.processing"
-                    variant="primary"
+                    variant="info"
                     class="items-center gap-2 max-w-xs flex justify-center"
                 >
-                    <span v-show="!form.processing">Criar carteira</span>
+                    <span v-show="!form.processing">Atualizar carteira</span>
                     <span v-show="form.processing">Aguarde...</span>
                 </Button>
             </div>

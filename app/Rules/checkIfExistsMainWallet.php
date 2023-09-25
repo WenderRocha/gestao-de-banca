@@ -26,12 +26,23 @@ class checkIfExistsMainWallet implements ValidationRule
         if ($main) {
 
             //verifica se já existe uma carteira principal
-            $exists = Wallet::where('user_id', $user_id)
+            $exists_id = Wallet::where('user_id', $user_id)
                 ->where('main', 1)
-                ->exists();
+                ->pluck('id')
+                ->first();
 
-            if ($exists) {
-                $fail('Já existe uma carteira principal cadastrada.');
+            //dd($exists_id);
+
+            if (request()->method() == 'PUT') {
+
+                if (!is_null($exists_id) && $exists_id != request()->input('id')) {
+                    $fail('Já existe uma carteira principal cadastrada.');
+                }
+            } else {
+
+                if (!is_null($exists_id)) {
+                    $fail('Já existe uma carteira principal cadastrada.');
+                }
             }
         }
     }
