@@ -15,7 +15,7 @@ return new class () extends Migration {
             $table->ulid('id')->primary();
             $table->foreignId('user_id')->constrained('users');
             $table->string('name')->default('Minha carteira');
-            $table->string('logo')->default('public/img/app-wallet-passes.png');
+            $table->string('logo')->default('/img/app-wallet-passes.png');
             $table->string('currency', 5)->default(CurrencyEnum::BRL->value);
             $table->decimal('initial_balance')->default(0);
             $table->decimal('balance')->default(50);

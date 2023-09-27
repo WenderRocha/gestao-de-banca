@@ -115,12 +115,7 @@ function updateBalance() {
 </script>
 
 <template>
-    <Button
-        @click="showModal"
-        external
-        variant="success"
-        class="items-center gap-2 max-w-xs flex justify-center"
-    >
+    <Button @click="showModal" external variant="success" class="items-center gap-2 max-w-xs flex justify-center">
         <span>Nova carteira</span>
     </Button>
 
@@ -132,110 +127,55 @@ function updateBalance() {
             <div>
                 <div class="mb-6 grid grid-cols-3 gap-3">
                     <div>
-                        <Input
-                            v-model="form.name"
-                            placeholder="Carteira, Quotex, IQ Option"
-                            label="Nome"
-                        />
+                        <Input v-model="form.name" placeholder="Carteira, Quotex, IQ Option" label="Nome" />
                         <ErrorValidation :error="form.errors.name" />
                     </div>
 
                     <div>
-                        <Select
-                            v-model="form.currency"
-                            placeholder="Selecione a moeda"
-                            :options="currencys"
-                            label="Moeda"
-                        />
+                        <Select v-model="form.currency" placeholder="Selecione a moeda" :options="currencys"
+                            label="Moeda" />
                         <ErrorValidation :error="form.errors.currency" />
                     </div>
                     <div>
-                        <CurrencyInput
-                            @keyup="updateBalance()"
-                            v-model="form.balance"
-                            label="Saldo inicial"
-                            :currency="form.currency"
-                            :key="currency_input_reload"
-                            @updateCurrencySymbol="updateCurrencySymbol"
-                        />
+                        <CurrencyInput @keyup="updateBalance()" v-model="form.balance" label="Saldo inicial"
+                            :currency="form.currency" :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol" />
 
                         <!-- <Input v-model="form.balance" label="Saldo inicial" /> -->
                         <ErrorValidation :error="form.errors.balance" />
                     </div>
                 </div>
-                <div
-                    v-show="form.balance !== null"
-                    class="mb-6 grid grid-cols-3 gap-3"
-                >
+                <div v-show="form.balance !== null" class="mb-6 grid grid-cols-3 gap-3">
                     <div>
-                        <Select
-                            @change="cleanStopType()"
-                            v-model="form.stop_type"
-                            :options="stopTypes"
-                            label="Tipo de stop"
-                            placeholder="Escolha o tipo de stop"
-                        />
+                        <Select @change="cleanStopType()" v-model="form.stop_type" :options="stopTypes" label="Tipo de stop"
+                            placeholder="Escolha o tipo de stop" />
 
                         <ErrorValidation :error="form.errors.stopType" />
                     </div>
                     <div>
-                        <CurrencyInput
-                            v-if="form.stop_type === 1"
-                            :disabled="form.stop_type === ''"
-                            v-model="form.stop"
-                            label="Stop Loss"
-                            :currency="form.currency"
-                            :key="currency_input_reload"
-                            @updateCurrencySymbol="updateCurrencySymbol"
-                        />
+                        <CurrencyInput v-if="form.stop_type === 1" :disabled="form.stop_type === ''" v-model="form.stop"
+                            label="Stop Loss" :currency="form.currency" :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol" />
 
-                        <CurrencyInput
-                            v-if="form.stop_type === 2"
-                            :disabled="true"
-                            v-model="stopTypeValue"
-                            :label="`Stop Loss ${rangeValueStop}%`"
-                            :currency="form.currency"
-                            :key="currency_input_reload"
-                            @updateCurrencySymbol="updateCurrencySymbol"
-                        />
+                        <CurrencyInput v-if="form.stop_type === 2" :disabled="true" v-model="stopTypeValue"
+                            :label="`Stop Loss ${rangeValueStop}%`" :currency="form.currency" :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol" />
 
-                        <input
-                            v-if="form.stop_type === 2"
-                            type="range"
-                            v-model="rangeValueStop"
-                            @change="calValueStop()"
-                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500"
-                        />
+                        <input v-if="form.stop_type === 2" type="range" v-model="rangeValueStop" @change="calValueStop()"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500" />
                         <ErrorValidation :error="form.errors.stop" />
                     </div>
                     <div>
-                        <CurrencyInput
-                            v-if="form.stop_type === 1"
-                            :disabled="form.stop_type === ''"
-                            v-model="form.take"
-                            label="Take profit"
-                            :currency="form.currency"
-                            :key="currency_input_reload"
-                            @updateCurrencySymbol="updateCurrencySymbol"
-                        />
+                        <CurrencyInput v-if="form.stop_type === 1" :disabled="form.stop_type === ''" v-model="form.take"
+                            label="Take profit" :currency="form.currency" :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol" />
 
-                        <CurrencyInput
-                            v-if="form.stop_type === 2"
-                            :disabled="true"
-                            v-model="takeTypeValue"
-                            :label="`Take profit ${rangeValueTake}%`"
-                            :currency="form.currency"
-                            :key="currency_input_reload"
-                            @updateCurrencySymbol="updateCurrencySymbol"
-                        />
+                        <CurrencyInput v-if="form.stop_type === 2" :disabled="true" v-model="takeTypeValue"
+                            :label="`Take profit ${rangeValueTake}%`" :currency="form.currency" :key="currency_input_reload"
+                            @updateCurrencySymbol="updateCurrencySymbol" />
 
-                        <input
-                            v-if="form.stop_type === 2"
-                            type="range"
-                            v-model="rangeValueTake"
-                            @change="calValueTake()"
-                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500"
-                        />
+                        <input v-if="form.stop_type === 2" type="range" v-model="rangeValueTake" @change="calValueTake()"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-500" />
 
                         <ErrorValidation :error="form.errors.take" />
                     </div>
@@ -250,10 +190,7 @@ function updateBalance() {
                         <ErrorValidation :error="form.errors.status" />
                     </div>
                     <div>
-                        <Toggle
-                            v-model="form.show_checklist"
-                            label="Exibir checklist"
-                        />
+                        <Toggle v-model="form.show_checklist" label="Exibir checklist" />
                         <ErrorValidation :error="form.errors.show_checklist" />
                     </div>
                 </div>
@@ -261,19 +198,11 @@ function updateBalance() {
         </template>
         <template #footer>
             <div class="flex justify-between">
-                <Button
-                    @click="closeModal"
-                    variant="secondary"
-                    class="items-center gap-2 max-w-xs flex justify-center"
-                >
+                <Button @click="closeModal" variant="secondary" class="items-center gap-2 max-w-xs flex justify-center">
                     <span>Cancelar</span>
                 </Button>
-                <Button
-                    @click="submit"
-                    :disabled="form.processing"
-                    variant="primary"
-                    class="items-center gap-2 max-w-xs flex justify-center"
-                >
+                <Button @click="submit" :disabled="form.processing" variant="primary"
+                    class="items-center gap-2 max-w-xs flex justify-center">
                     <span v-show="!form.processing">Criar carteira</span>
                     <span v-show="form.processing">Aguarde...</span>
                 </Button>

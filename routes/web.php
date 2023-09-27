@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{ProfileController, WalletController};
+use App\Http\Controllers\{ManagementController, ProfileController, WalletController};
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,11 +25,10 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', [ManagementController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -37,16 +36,22 @@ Route::middleware('auth')->group(function () {
     /**
      * Wallet
      */
-
     Route::get('/carteiras', [WalletController::class, 'index'])->name('wallet.index');
     Route::post('/carteiras', [WalletController::class, 'store'])->name('wallet.store');
     Route::delete('/carteiras/{id}', [WalletController::class, 'destroy'])->name('wallet.destroy');
     Route::put('/wallet', [WalletController::class, 'update'])->name('wallet.update');
 
-    Route::get('/transacoes', function (){
-      return Inertia::render('Transection');
+    /**
+     * Transações
+     */
+    Route::get('/transacoes', function () {
+        return Inertia::render('Transaction');
     })->name('transacoes.index');
 
+    /**
+     * Management
+     */
+    Route::get('/dashboard/{id}', [ManagementController::class, 'index'])->middleware(['auth', 'verified'])->name('management.index');
 
 });
 

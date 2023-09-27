@@ -10,6 +10,9 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import "flowbite";
 
+import VCalendar from 'v-calendar';
+import 'v-calendar/style.css';
+
 const options = {
     // You can set your default notification options here
     position: "top-right",
@@ -41,6 +44,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(Toast, options)
+            .use(VCalendar, {})
             .mount(el);
     },
     progress: {
