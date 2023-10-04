@@ -2,11 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace App\Services\Service\Wallet;
+namespace App\Services\Wallet;
 
 use App\Models\Wallet;
-use App\Services\ServiceInterface\Wallet\WalletServiceInterface;
+
 use Illuminate\Support\Facades\{Auth, Log};
+use App\Services\Wallet\WalletServiceInterface;
 
 class WalletService implements WalletServiceInterface
 {

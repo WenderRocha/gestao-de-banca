@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{StoreWalletRequest, UpdateWalletRequest};
-use App\Models\Wallet;
-use App\Services\ServiceInterface\Wallet\WalletServiceInterface;
 use Inertia\Inertia;
+use App\Models\Wallet;
+
+use App\Services\Wallet\WalletServiceInterface;
+use App\Http\Requests\{StoreWalletRequest, UpdateWalletRequest};
 
 class WalletController extends Controller
 {

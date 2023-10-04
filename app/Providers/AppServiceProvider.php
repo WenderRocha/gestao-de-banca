@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
-use App\Services\Service\Wallet\WalletService;
-use App\Services\ServiceInterface\Wallet\WalletServiceInterface;
+
+use App\Services\Wallet\WalletService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use App\Services\Wallet\WalletServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
