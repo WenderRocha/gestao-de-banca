@@ -3,11 +3,12 @@ import { Modal, Input } from "flowbite-vue";
 import { ref, watch, reactive, defineProps } from "vue";
 import Button from "@/Components/Button.vue";
 import ErrorValidation from "@/Components/ErrorValidation.vue";
+import CurrencyInput from "../Shared/CurrencyInput.vue";
 import { useForm } from "@inertiajs/vue3";
 import { Select, Toggle, Range } from "flowbite-vue";
 import { usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
-import CurrencyInput from "../Shared/CurrencyInput.vue";
+
 
 const toast = useToast();
 

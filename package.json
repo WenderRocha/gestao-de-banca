@@ -25,8 +25,10 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
+        "chart.js": "^4.4.0",
         "flowbite-vue": "^0.0.17-next.2",
         "v-calendar": "^3.1.0",
+        "vue-chartjs": "^5.2.0",
         "vue-currency-input": "^3.0.5",
         "vue-toastification": "^2.0.0-rc.5"
     }

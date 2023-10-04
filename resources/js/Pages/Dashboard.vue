@@ -1,12 +1,24 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Button from "@/Components/Button.vue";
-import { GithubIcon } from "@/Components/Icons/brands";
-import { Progress } from "flowbite-vue";
+import { CalculatorIcon } from '@heroicons/vue/outline'
 import ManagementCard from "../Pages/Components/Shared/ManagementCard.vue";
-import { ref } from "vue"
+import CalcProfit from "../Pages/Components/Shared/CalcProfit.vue";
+import { ref, reactive } from "vue"
 import { isDark } from '@/Composables'
+import { Bar, Doughnut } from 'vue-chartjs'
+import {
+    Chart as ChartJS,
+    Title,
+    ArcElement,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+} from "chart.js";
 
+ChartJS.register(Title, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const props = defineProps({
     wallet: Object
@@ -20,90 +32,94 @@ const stopTypeValue = ref(
 );
 
 const attrs = ref([
+  
     {
-        key: "today",
-        highlight: true,
-        dates: new Date(),
-        popover: {
-            label: "Nenhum trade",
-        },
+        key: "gray",
+        highlight: "gray",
+        dates: new Date(2023, 9, 1),
+  
     },
+    {
+        key: "gray",
+        highlight: "gray",
+        dates: new Date(2023, 9, 2),
 
-    {
-        key: "win",
-        highlight: "green",
-        dates: new Date(2023, 6, 28),
-        popover: {
-            label: "Operação linda realizada as 8 da manhã",
-        },
     },
     {
         key: "win",
         highlight: "green",
-        dates: new Date(2023, 6, 29),
+        dates: new Date(2023, 9, 3),
         popover: {
-            label: "Operação linda realizada as 8 da manhã",
+            label: "Win, 150.00 -> 180.40 = 30.40",
         },
     },
     {
-        key: "loss",
-        highlight: "red",
-        dates: new Date(2023, 6, 30),
-        popover: {
-            label: "Derrota OTC",
-        },
-    },
-    {
-        key: "win",
+        key: "win2",
         highlight: "green",
-        dates: new Date(2023, 6, 31),
+        dates: new Date(2023, 9, 4),
         popover: {
-            label: "Recuperação do lucro",
-        },
-    },
-
-    {
-        key: "loss",
-        highlight: "red",
-        dates: new Date(2023, 7, 1),
-        popover: {
-            label: "Loss, menos 140,00 por falta de gerenciamento e psicologico",
-        },
-    },
-    {
-        key: "loss",
-        highlight: "red",
-        dates: new Date(2023, 7, 2),
-        popover: {
-            label: "Loss, menos 250,00 por falta de gerenciamento e psicologico",
-        },
-    },
-    {
-        key: "win",
-        highlight: "green",
-        dates: new Date(2023, 7, 3),
-        popover: {
-            label: "Win, operação utilizando soros lvl 2 com R$ 22,00",
-        },
-    },
-    {
-        key: "win",
-        highlight: "green",
-        dates: new Date(2023, 8, 28),
-        popover: {
-            label: "Win, operação utilizando soros lvl 2 com R$ 22,00",
-        },
-    },
-    {
-        key: "win",
-        highlight: "green",
-        dates: new Date(2023, 8, 29),
-        popover: {
-            label: "Win, operação utilizando soros lvl 2 com R$ 22,00",
+            label: "Win, 180.40 -> 217.30 = 36.90",
         },
     },
 
 ]);
+
+
+
+const chartData = reactive({
+    labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Abr",
+        "Mai",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Set",
+        "Out",
+        "Nov",
+        "Dez",
+    ],
+    datasets: [
+        {
+            label: "Desempenho mensal",
+            backgroundColor: "#a855f7",
+            data: [40, 20, 12],
+        },
+    ],
+});
+
+const chartOptions = ref({
+    responsive: true
+})
+
+
+const doughnutData = reactive({
+    labels: ["Win", "Loss"],
+    datasets: [
+        {
+            backgroundColor: ["#a855f7", "#3b0764"],
+            data: [2, 0],
+        },
+    ],
+});
+
+const doughnutOptions = reactive({
+    responsive: true,
+    maintainAspectRatio: false,
+});
+
+
+//modal calc profit
+const isShowCalcProfit = ref(false);
+
+function showModalCalcProfit() {
+    isShowCalcProfit.value = true
+}
+function closeModalCalcProfit() {
+    isShowCalcProfit.value = false
+}
 </script>
 
 <template>
@@ -115,18 +131,16 @@ const attrs = ref([
                     <h2 class="text-xl font-semibold leading-tight">{{ wallet.name }}</h2>
                 </div>
 
-                <Button external variant="black" target="_blank" class="items-center gap-2 max-w-xs"
-                    v-slot="{ iconSizeClasses }" href="https://github.com/kamona-wd/kui-laravel-breeze">
-                    <GithubIcon aria-hidden="true" :class="iconSizeClasses" />
-
-                    <span>Star on Github</span>
+                <Button @click="showModalCalcProfit" variant="primary"  class="items-center gap-2 max-w-xs"
+                    v-slot="{ iconSizeClasses }">
+                    <CalculatorIcon aria-hidden="true" :class="iconSizeClasses" />
                 </Button>
             </div>
         </template>
 
         <div class="p-6 overflow-hidden bg-white rounded-md shadow-md dark:bg-dark-eval-1">
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div class="py-5 grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <ManagementCard title="Saldo inicial" :currency="wallet.currency" :balance="wallet.initial_balance" />
                 <ManagementCard title="Saldo Atual" :currency="wallet.currency" :balance="wallet.balance">
                     <template #icon>
@@ -160,10 +174,28 @@ const attrs = ref([
                 </ManagementCard>
             </div>
 
-            <div class="w-full mt-3">
-                <VCalendar borderless :is-dark="isDark" :attributes='attrs' expanded />
+            <div class="w-full py-5 border border-gray-200 rounded-lg dark:border-gray-700">
+                <VCalendar :is-dark="isDark" :attributes='attrs' borderless expanded />
             </div>
 
+            <div class="w-full py-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                    <a href="#"
+                        class="w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+                    </a>
+
+
+                    <a href="#"
+                        class="w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <Doughnut :data="doughnutData" :options="doughnutOptions" />
+                    </a>
+
+                </div>
+            </div>
         </div>
+
+        <CalcProfit @close="closeModalCalcProfit" :is-show-modal="isShowCalcProfit" :currency="wallet.currency" :stop="stopTypeValue"/>
     </AuthenticatedLayout>
 </template>
